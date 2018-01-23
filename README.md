@@ -104,3 +104,101 @@ try {
 하지만 이렇게하면 덮어쓰기가 되어서 저장파일에는 마지막 한 줄만 번역이 되어있다 ! 
 
 이부분은 다음에 고치도록 하겠습니다 !
+
+---
+
+### 파일 이어쓰기
+
+```java
+File outFile = new File("C:\\Users\\Hee\\eclipse-workspace\\fileuploder", "번역.txt");
+PrintWriter pw = null;
+
+try {
+  pw = new PrintWriter(new FileWriter(outFile,true));
+  pw.println(translatedText);
+} catch (FileNotFoundException e) {        
+  e.printStackTrace();
+} catch (IOException e) {          
+  e.printStackTrace();
+} finally{
+  if(pw != null) pw.close();
+}
+```
+
+### JSON 파싱하기
+
+**이게 가장 어려웠고, 고쳐야할 부분이 있다 !  하지만, 일단은 완성했다 ! 나중에 고치도록 하겠다.**
+
+일단 연습코드를 보고 JSON을 분석하는 방법을 이해하자 !
+
+- json 파일
+
+```json
+{
+   "pageInfo": {
+         "pageName": "abc",
+         "pagePic": "http://example.com/content.jpg"
+    }
+    "posts": [
+         {
+              "post_id": "123456789012_123456789012",
+              "actor_id": "1234567890",
+              "picOfPersonWhoPosted": "http://example.com/photo.jpg",
+              "nameOfPersonWhoPosted": "Jane Doe",
+              "message": "Sounds cool. Can't wait to see it!",
+              "likesCount": "2",
+              "comments": [],
+              "timeOfPost": "1234567890"
+         }
+    ]
+}
+```
+
+- Java로 json 파싱하여 pageName , pagePic , post_id 값 얻기
+
+```java
+// 연습코드
+// 다운로드 가능한 jar : http://mvnrepository.com/artifact/org.json/json
+
+import org.json.*;
+
+JSONObject obj = new JSONObject(" .... ");
+String pageName = obj.getJSONObject("pageInfo").getString("pageName");
+
+JSONArray arr = obj.getJSONArray("posts");
+for (int i = 0; i < arr.length(); i++)
+{
+    String post_id = arr.getJSONObject(i).getString("post_id");
+    ......
+}
+```
+
+#### 파파고 응답 예제 Json
+
+```json
+< HTTP/1.1 200 OK
+< Server: nginx
+< Date: Wed, 28 Sep 2016 06:48:40 GMT
+< Content-Type: application/json;charset=utf-8
+< Content-Length: 136
+< Connection: keep-alive
+< Keep-Alive: timeout=5
+< Vary: Accept-Encoding
+< X-QUOTA: 10
+<
+* Connection #0 to host openapi.naver.com left intact
+{"message":
+    {"@type":"response",
+        "@service":"naverservice.labs.api",
+        "@version":"1.0.0",
+        "result":
+            {"translatedText":"So glad to see you."}
+    }
+
+```
+
+우선, Java에서 JSON 파싱하기가 생각보다 어려웠다. 왜냐하면 파파고의 응답 값을 JSON array에 넣으려고 했더니, Json이 array가 없었다. 그래서 당황스러웠다 !! 파파고의 응답 값은 hash로만 이루어져있었다. 
+
+그래서 파싱한 후 hash의 key값을 이용해 value 값을 뽑아냈다. 하지만 이 부분에서 고쳐야 할 부분이 있다.
+
+JSONObject 을 두 번 사용하여 원하는 key값을 뽑아냈다. 결국 하드코딩... 이 부분을 고치기 위해 좀 더 생각해봐야겠다. 무튼 두 번 사용하여 원하는 value값을 뽑아냈고 번역된 문장만 파일에 저장하도록 만들었다 !
