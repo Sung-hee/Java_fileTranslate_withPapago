@@ -17,8 +17,8 @@ import org.json.*;
 public class app {
 
 public static void main(String[] args) throws JSONException {
-	   String clientId = "애플리케이션 클라이언트 아이디값";
-	   String clientSecret = "애플리케이션 클라이언트 시크릿값";
+   String clientId = "YOUR_CLIENT_ID";
+   String clientSecret = "YOUR_CLIENT_SECRET";
    
    File inFile = new File("C:\\Users\\Hee\\eclipse-workspace\\fileuploder", "test.txt");
    File outFile = new File("C:\\Users\\Hee\\eclipse-workspace\\fileuploder", "번역.txt");
